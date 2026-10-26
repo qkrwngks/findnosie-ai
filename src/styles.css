@@ -337,7 +337,8 @@ ul {
   inset: 0 50% 0 0;
   background: var(--band);
 }
-.rec-band canvas {
+.rec-band canvas,
+.player-band canvas {
   position: absolute;
   inset: 0;
 }
@@ -455,10 +456,6 @@ ul {
 }
 .player-band:active {
   cursor: grabbing;
-}
-.player-band canvas {
-  position: absolute;
-  inset: 0;
 }
 .player .playhead {
   background: var(--green-dim);
@@ -654,9 +651,6 @@ ul {
   border-radius: 50%;
   background: #ec3038;
 }
-.wheel--recording .wheel-btn {
-  display: none;
-}
 
 .legend {
   left: 188px;
@@ -684,9 +678,6 @@ ul {
 .layout-expanded .footer {
   opacity: 0;
   pointer-events: none;
-}
-.view-recording .legend {
-  display: none;
 }
 
 .rec-label {
@@ -768,7 +759,8 @@ ul {
   .hint,
   .wheel,
   .legend,
-  .footer {
+  .footer,
+  .rec-label {
     transition: none;
   }
 }

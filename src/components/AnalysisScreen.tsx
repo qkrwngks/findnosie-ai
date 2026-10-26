@@ -1,12 +1,12 @@
 import { useContext, useEffect, useRef, useState } from 'react';
 import { fetchAnalysis, WAVE_BARS_PER_SEC, type Analysis, type Recording } from '../api/recordings';
-import { formatDotted, ScaleContext } from '../scale';
-import { BackIcon, PauseIcon, PlayIcon } from './Icons';
-import { Waveform } from './Waveform';
+import { formatDotted } from '../format';
+import { ScaleContext } from '../scale';
+import { PauseIcon, PlayIcon } from './Icons';
+import { ScreenHeader } from './ScreenHeader';
+import { BAR_SPACING, Waveform } from './Waveform';
 
 type PlayState = 'idle' | 'playing' | 'paused';
-
-const SPACING = 9.5;
 
 interface Props {
   recording: Recording;
@@ -65,7 +65,7 @@ export function AnalysisScreen({ recording, onBack }: Props) {
     const d = dragRef.current;
     if (!d) return;
     const dx = (e.clientX - d.x) / scale;
-    seek(d.t - dx / (SPACING * WAVE_BARS_PER_SEC));
+    seek(d.t - dx / (BAR_SPACING * WAVE_BARS_PER_SEC));
     if (state === 'idle' && Math.abs(dx) > 2) setState('paused');
   };
   const onPointerUp = () => {
@@ -76,12 +76,7 @@ export function AnalysisScreen({ recording, onBack }: Props) {
 
   return (
     <>
-      <header className="screen-header">
-        <button className="hdr-left" onClick={onBack} aria-label="뒤로">
-          <BackIcon />
-        </button>
-        <h1>분석 결과</h1>
-      </header>
+      <ScreenHeader title="분석 결과" onBack={onBack} />
 
       <section className="an-card">
         <h2 className="an-title">{recording.name}</h2>
@@ -107,7 +102,7 @@ export function AnalysisScreen({ recording, onBack }: Props) {
             onPointerUp={onPointerUp}
             onPointerCancel={onPointerUp}
           >
-            <Waveform width={749} height={182} amps={recording.amps} position={time * WAVE_BARS_PER_SEC} spacing={SPACING} />
+            <Waveform width={749} height={182} amps={recording.amps} position={time * WAVE_BARS_PER_SEC} />
             <div className="playhead" />
           </div>
         </div>

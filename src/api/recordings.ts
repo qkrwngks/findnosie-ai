@@ -29,7 +29,7 @@ function seeded(seed: number) {
 }
 
 /** 디자인 시안처럼 작게 시작해서 점점 커지는 파형을 결정적으로 생성 */
-export function generateAmps(duration: number, seed: number): number[] {
+function generateAmps(duration: number, seed: number): number[] {
   const rand = seeded(seed);
   const n = Math.max(1, Math.round(duration * WAVE_BARS_PER_SEC));
   const amps: number[] = [];

@@ -10,23 +10,23 @@ export const MIN_RECORD_SEC = 5;
 export function useRecorder() {
   const [isRecording, setIsRecording] = useState(false);
   const [elapsed, setElapsed] = useState(0);
-  const [amps, setAmps] = useState<number[]>([]);
 
   const elapsedRef = useRef(0);
   const ampsRef = useRef<number[]>([]);
   const lastTickRef = useRef(0);
   const rafRef = useRef(0);
   const analyserRef = useRef<AnalyserNode | null>(null);
+  const bufRef = useRef<Float32Array | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const ctxRef = useRef<AudioContext | null>(null);
 
   const sampleLevel = useCallback(() => {
     const analyser = analyserRef.current;
-    if (!analyser) {
+    const buf = bufRef.current;
+    if (!analyser || !buf) {
       const i = ampsRef.current.length;
       return Math.min(1, 0.15 + Math.min(1, i / 30) * (0.3 + Math.random() * 0.7));
     }
-    const buf = new Float32Array(analyser.fftSize);
     analyser.getFloatTimeDomainData(buf);
     let sum = 0;
     for (const v of buf) sum += v * v;
@@ -38,12 +38,8 @@ export function useRecorder() {
       elapsedRef.current += (now - lastTickRef.current) / 1000;
       lastTickRef.current = now;
       const want = Math.floor(elapsedRef.current * WAVE_BARS_PER_SEC);
-      if (ampsRef.current.length < want) {
-        const next = [...ampsRef.current];
-        while (next.length < want) next.push(sampleLevel());
-        ampsRef.current = next;
-        setAmps(next);
-      }
+      // 매 프레임 setElapsed로 재렌더되므로 amps는 ref 배열에 바로 추가한다
+      while (ampsRef.current.length < want) ampsRef.current.push(sampleLevel());
       setElapsed(elapsedRef.current);
       rafRef.current = requestAnimationFrame(loop);
     },
@@ -67,6 +63,7 @@ export function useRecorder() {
     streamRef.current = null;
     ctxRef.current = null;
     analyserRef.current = null;
+    bufRef.current = null;
   }, []);
 
   const start = useCallback(() => {
@@ -74,7 +71,6 @@ export function useRecorder() {
     elapsedRef.current = 0;
     ampsRef.current = [];
     setElapsed(0);
-    setAmps([]);
     resume();
 
     if (!navigator.mediaDevices?.getUserMedia) return;
@@ -88,6 +84,7 @@ export function useRecorder() {
         streamRef.current = stream;
         ctxRef.current = ctx;
         analyserRef.current = analyser;
+        bufRef.current = new Float32Array(analyser.fftSize);
       })
       .catch(() => {
         /* 권한 거부 시 가상 파형 유지 */
@@ -109,5 +106,5 @@ export function useRecorder() {
     [releaseMic],
   );
 
-  return { isRecording, elapsed, amps, start, pause, resume, finish };
+  return { isRecording, elapsed, amps: ampsRef.current, start, pause, resume, finish };
 }

@@ -44,7 +44,7 @@ export function App() {
           phone: !expanded && !hasSelection,
           center: !expanded,
         }
-      : { download: false, more: false, upload: false, phone: false, center: view === 'recording' };
+      : { download: false, more: false, upload: false, phone: false, center: false };
 
   const startRecording = () => {
     setSelectedId(null);
@@ -100,7 +100,7 @@ export function App() {
             <div className="brand">
               <BrandIcon className="brand-icon" />
               <span>
-                <b>Findnosie</b> AI
+                <b>S-Vibe</b> AI
               </span>
             </div>
 

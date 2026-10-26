@@ -1,9 +1,7 @@
 import { DownloadIcon, MicIcon, MoreIcon, PhoneIcon, UploadIcon } from './Icons';
 
-export type WheelMode = 'library' | 'recording';
-
 interface Props {
-  mode: WheelMode;
+  mode: 'library' | 'recording';
   isRecording?: boolean;
   enabled: { download: boolean; more: boolean; upload: boolean; phone: boolean; center: boolean };
   onDownload: () => void;

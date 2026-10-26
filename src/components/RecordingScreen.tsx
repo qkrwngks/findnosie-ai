@@ -1,6 +1,6 @@
 import { WAVE_BARS_PER_SEC } from '../api/recordings';
-import { formatTimer } from '../scale';
-import { BackIcon } from './Icons';
+import { formatTimer } from '../format';
+import { ScreenHeader } from './ScreenHeader';
 import { Waveform } from './Waveform';
 
 interface Props {
@@ -13,12 +13,7 @@ interface Props {
 export function RecordingScreen({ isRecording, elapsed, amps, onBack }: Props) {
   return (
     <>
-      <header className="screen-header">
-        <button className="hdr-left" onClick={onBack} aria-label="뒤로">
-          <BackIcon />
-        </button>
-        <h1>실시간 녹음</h1>
-      </header>
+      <ScreenHeader title="실시간 녹음" onBack={onBack} />
 
       <div className="rec-timer">
         <span className={`rec-indicator${isRecording ? ' is-on' : ''}`} />
